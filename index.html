@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumenal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&family=Tajawal:wght@300;400;500;700&family=Heebo:wght@300;400;500;700&family=Frank+Ruhl+Libre:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    box-sizing:border-box;
+    --ink:#0F0E0D; --ink-2:#181513; --bone:#ECE6DA; --bone-dim:#a79c8c; --brass:#B08D57;
+    --line: rgba(236,230,218,0.14);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:inherit;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior:smooth;}
+  html,body{margin:0;padding:0;background:var(--ink);}
+  body{font-family:'Tajawal',sans-serif;color:var(--bone);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  body.locked{overflow:hidden;}
+  img{max-width:100%;display:block;}
+  .wordmark{font-family:'Cinzel',serif;letter-spacing:0.16em;direction:ltr;text-transform:uppercase;}
+  .quote-en{font-family:'Cormorant Garamond',serif;font-style:italic;direction:ltr;text-align:start;}
+  a{color:inherit;}
+  section{padding:5rem 1.5rem;}
+  .wrap{max-width:640px;margin:0 auto;}
+
+  /* HEBREW FONT OVERRIDES */
+  body[data-lang="he"]{font-family:'Heebo',sans-serif;}
+  body[data-lang="he"] .story .tag, body[data-lang="he"] .duo h4{font-family:'Frank Ruhl Libre',serif;}
+  body[data-lang="he"] .p-tag, body[data-lang="he"] .scroll-hint, body[data-lang="he"] .contact-line,
+  body[data-lang="he"] .ship-note, body[data-lang="he"] .fine, body[data-lang="he"] .cta,
+  body[data-lang="he"] .cart-form input, body[data-lang="he"] .cart-form textarea{font-family:'Heebo',sans-serif;}
+
+  /* LANG TOGGLE */
+  .lang-group{
+    position:fixed;top:calc(1rem + env(safe-area-inset-top,0px));inset-inline-start:1rem;z-index:60;
+    display:flex;gap:2px;background:rgba(15,14,13,0.55);border:1px solid var(--brass);
+    border-radius:999px;padding:3px;
+  }
+  .lang-group button{
+    border:none;background:none;color:var(--bone-dim);font-family:'Cinzel',serif;
+    font-size:0.62rem;letter-spacing:0.02em;padding:0.42rem 0.5rem;border-radius:999px;cursor:pointer;
+  }
+  .lang-group button.active{background:var(--brass);color:var(--ink);}
+
+  /* HERO / VIDEO REEL */
+  .reel{position:relative;height:100svh;overflow:hidden;}
+  .reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .reel-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(15,14,13,0.55) 0%, rgba(15,14,13,0.35) 40%, rgba(15,14,13,0.85) 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.5rem;
+  }
+  .reel-overlay .wordmark{font-size:clamp(2.6rem, 11vw, 5.2rem);font-weight:500;color:var(--bone);margin:0;}
+  .reel-overlay .tag-en{margin-top:1rem;font-size:1.15rem;color:var(--bone);}
+  .reel-overlay .tag-ar{margin-top:0.4rem;font-size:0.92rem;color:var(--bone-dim);}
+  .rule{width:34px;height:1px;background:var(--brass);margin:2rem auto;}
+  .scroll-hint{position:absolute;bottom:calc(1.6rem + env(safe-area-inset-bottom,0px));font-size:0.72rem;color:var(--bone-dim);letter-spacing:0.08em;left:0;right:0;text-align:center;}
+  .sound-toggle{
+    position:absolute;bottom:calc(4.2rem + env(safe-area-inset-bottom,0px));inset-inline-end:1.2rem;
+    width:44px;height:44px;border-radius:50%;border:1px solid var(--brass);
+    background:rgba(15,14,13,0.45);color:var(--bone);font-size:1.05rem;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;
+  }
+
+  /* STORY */
+  .story{background:var(--ink-2);text-align:center;}
+  .story .quote-en{font-size:clamp(1.2rem,3.4vw,1.55rem);line-height:1.7;color:var(--bone);max-width:34ch;margin:0 auto;text-align:center;}
+  .story .quote-body{margin-top:1.3rem;font-size:0.95rem;line-height:1.9;color:var(--bone-dim);max-width:36ch;margin-inline:auto;}
+  .story .tag{display:block;margin-top:2rem;font-size:0.85rem;color:var(--brass);}
+
+  /* PHILOSOPHY */
+  .philosophy ul{list-style:none;padding:0;margin:0;max-width:480px;margin-inline:auto;}
+  .philosophy li{padding:1rem 0;border-top:1px solid var(--line);font-size:0.98rem;line-height:1.7;color:var(--bone-dim);}
+  .philosophy li:last-child{border-bottom:1px solid var(--line);}
+
+  /* PRODUCTS */
+  .product{max-width:520px;margin:0 auto;padding:3.4rem 0;border-top:1px solid var(--line);}
+  .products .product:last-child{border-bottom:1px solid var(--line);}
+  .p-gallery{display:flex;gap:0.6rem;overflow-x:auto;scroll-snap-type:x mandatory;margin-bottom:1.8rem;padding-bottom:0.3rem;-webkit-overflow-scrolling:touch;}
+  .p-gallery::-webkit-scrollbar{height:3px;}
+  .p-gallery::-webkit-scrollbar-thumb{background:var(--line);}
+  .p-gallery img{flex:0 0 82%;scroll-snap-align:start;aspect-ratio:3/4;object-fit:cover;border-radius:2px;box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);cursor:pointer;}
+  .p-tag{font-size:0.76rem;letter-spacing:0.04em;margin:0 0 0.4rem;}
+  .p-name{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:500;margin:0 0 1rem;direction:ltr;text-align:start;letter-spacing:0.04em;}
+  .p-quote{font-size:1.05rem;line-height:1.8;color:var(--bone);margin:0 0 1.3rem;}
+  .p-price{display:flex;align-items:baseline;gap:0.7rem;margin:0 0 1.1rem;}
+  .p-price .old{font-size:0.95rem;color:#D9534F;text-decoration:line-through;}
+  .p-price .new{font-family:'Cinzel',serif;font-size:1.3rem;color:#4CAF6D;letter-spacing:0.02em;}
+  .p-price .badge{font-size:0.72rem;color:var(--ink);padding:0.15rem 0.55rem;border-radius:2px;letter-spacing:0.02em;}
+  .cta{display:inline-block;font-size:0.88rem;background:none;border:none;padding:0 0 2px;text-decoration:none;font-family:'Tajawal',sans-serif;cursor:pointer;border-bottom:1px solid currentColor;}
+  .p-size{font-size:0.8rem;color:var(--bone-dim);margin-inline-start:1rem;}
+
+  /* USAGE / CARE */
+  .duo{background:var(--ink-2);}
+  .duo .wrap{display:grid;gap:2.4rem;}
+  .duo h4{font-family:'Cinzel',serif;font-size:1.05rem;font-weight:500;margin:0 0 0.7rem;letter-spacing:0.05em;}
+  .duo p{font-size:0.95rem;line-height:1.85;color:var(--bone-dim);margin:0;}
+  @media(min-width:600px){ .duo .wrap{grid-template-columns:1fr 1fr;} }
+
+  footer{text-align:center;padding:4.5rem 1.5rem calc(3rem + env(safe-area-inset-bottom, 0px));}
+  footer .wordmark{font-size:1.1rem;color:var(--bone-dim);display:block;margin-bottom:1.6rem;}
+  .contact-line{font-size:1.05rem;margin-bottom:0.6rem;}
+  .contact-line a{border-bottom:1px solid var(--brass);text-decoration:none;}
+  .ship-note{font-size:0.82rem;color:var(--bone-dim);margin-top:1.8rem;}
+  .fine{font-size:0.72rem;color:#5f584d;margin-top:2.4rem;}
+
+  /* PRODUCT DETAIL OVERLAY */
+  .overlay{
+    position:fixed;inset:0;background:var(--ink);z-index:100;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    opacity:0;pointer-events:none;transition:opacity 0.25s ease;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .overlay-inner{max-width:560px;margin:0 auto;padding:1.4rem 1.5rem 4rem;}
+  .overlay-top{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0 1.6rem;}
+  .overlay-top .wordmark{font-size:0.95rem;color:var(--bone-dim);}
+  .overlay-close{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--bone);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .overlay-photos{display:flex;gap:0.7rem;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;margin-bottom:1rem;padding-bottom:0.3rem;}
+  .overlay-photos::-webkit-scrollbar{height:3px;}
+  .overlay-photos::-webkit-scrollbar-thumb{background:var(--line);}
+  .overlay-photos img{flex:0 0 88%;scroll-snap-align:start;aspect-ratio:3/4;object-fit:cover;border-radius:2px;box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);}
+  .overlay .p-name{margin-top:1.6rem;}
+  .wa-order, .cart-btn-order{
+    display:flex;align-items:center;justify-content:center;gap:0.6rem;
+    width:100%;margin-top:0.6rem;padding:1rem;border-radius:4px;
+    background:var(--brass);color:var(--ink);border:none;
+    font-family:'Tajawal',sans-serif;font-weight:500;font-size:1rem;
+    text-decoration:none;cursor:pointer;
+  }
+
+  /* CART ICON */
+  .cart-toggle{
+    position:fixed;top:calc(1rem + env(safe-area-inset-top,0px));inset-inline-end:1rem;z-index:60;
+    width:42px;height:42px;border-radius:50%;border:1px solid var(--brass);
+    background:rgba(15,14,13,0.55);color:var(--bone);font-size:1.1rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cart-badge{
+    position:absolute;top:-4px;inset-inline-end:-4px;
+    background:#4CAF6D;color:var(--ink);font-size:0.65rem;font-weight:700;
+    min-width:17px;height:17px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;padding:0 2px;
+  }
+
+  /* CART OVERLAY */
+  .cart-item{display:flex;gap:0.8rem;align-items:center;padding:0.9rem 0;border-top:1px solid var(--line);}
+  .cart-item img{width:56px;height:70px;object-fit:cover;border-radius:2px;flex:0 0 auto;}
+  .cart-item .ci-name{font-family:'Cinzel',serif;font-size:0.92rem;direction:ltr;text-align:start;}
+  .cart-item .ci-price{font-size:0.82rem;color:var(--bone-dim);margin-top:0.2rem;}
+  .cart-item .ci-qty{display:flex;align-items:center;gap:0.5rem;margin-inline-start:auto;}
+  .ci-qty button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--bone);cursor:pointer;font-size:0.9rem;}
+  .ci-remove{background:none;border:none;color:#D9534F;font-size:0.85rem;cursor:pointer;margin-inline-start:0.6rem;}
+  .cart-summary{border-top:1px solid var(--line);margin-top:0.6rem;padding-top:1rem;}
+  .cart-summary .row{display:flex;justify-content:space-between;font-size:0.92rem;color:var(--bone-dim);padding:0.3rem 0;}
+  .cart-summary .row.total{color:var(--bone);font-size:1.1rem;font-family:'Cinzel',serif;}
+  .cart-form{margin-top:1.6rem;display:flex;flex-direction:column;gap:0.8rem;}
+  .cart-form input, .cart-form textarea{
+    width:100%;background:var(--ink-2);border:1px solid var(--line);border-radius:4px;
+    color:var(--bone);font-family:'Tajawal',sans-serif;font-size:0.95rem;padding:0.8rem;
+  }
+  .cart-form textarea{resize:vertical;min-height:64px;}
+  .cart-empty{color:var(--bone-dim);font-size:0.92rem;padding:2rem 0;text-align:center;}
+</style>
+</head>
+<body data-lang="ar">
+
+<div class="lang-group" id="langGroup">
+  <button data-lang-btn="ar">AR</button>
+  <button data-lang-btn="en">EN</button>
+  <button data-lang-btn="he">HE</button>
+</div>
+<button class="cart-toggle" id="cartToggle">🛍️<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
+
+<section class="reel">
+  <video id="heroVideo" class="reel-video" autoplay muted playsinline loop preload="auto" poster="images/poster.jpg">
+    <source src="video/noir.mp4" type="video/mp4">
+  </video>
+  <div class="reel-overlay">
+    <p class="wordmark">LUMENAL</p>
+    <p class="tag-en quote-en">Inner light. Eternal luxury.</p>
+    <div class="rule"></div>
+    <p class="tag-ar" data-i18n="heroTag"></p>
+  </div>
+  <button class="sound-toggle" id="heroPlayBtn" aria-label="Sound"><span class="ic">🔊</span></button>
+  <span class="scroll-hint" data-i18n="scrollHint"></span>
+</section>
+
+<section class="story wrap">
+  <p class="quote-en">"True luxury glows from within."</p>
+  <p class="quote-body" data-i18n="storyBody"></p>
+  <span class="tag" data-i18n="storyTag"></span>
+</section>
+
+<section class="philosophy wrap">
+  <ul>
+    <li data-i18n="phil1"></li>
+    <li data-i18n="phil2"></li>
+    <li data-i18n="phil3"></li>
+    <li data-i18n="phil4"></li>
+    <li data-i18n="phil5"></li>
+  </ul>
+</section>
+
+<section class="products wrap">
+
+  <div class="product">
+    <div class="p-gallery" data-product="noir"></div>
+    <p class="p-tag" style="color:#C9A17E" data-i18n="tagNoir"></p>
+    <h3 class="p-name">NOIR DESIRE</h3>
+    <p class="p-quote" data-i18n="quoteNoir"></p>
+    <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" style="background:#C9A17E" data-i18n="discount"></span></div>
+    <button class="cta" style="color:#C9A17E" data-open="noir" data-i18n="ctaOrder"></button><span class="p-size" data-i18n="size"></span>
+  </div>
+
+  <div class="product">
+    <div class="p-gallery" data-product="crave"></div>
+    <p class="p-tag" style="color:#C96B5A" data-i18n="tagCrave"></p>
+    <h3 class="p-name">CRAVE ME</h3>
+    <p class="p-quote" data-i18n="quoteCrave"></p>
+    <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" style="background:#C96B5A" data-i18n="discount"></span></div>
+    <button class="cta" style="color:#C96B5A" data-open="crave" data-i18n="ctaOrder"></button><span class="p-size" data-i18n="size"></span>
+  </div>
+
+  <div class="product">
+    <div class="p-gallery" data-product="magnetic"></div>
+    <p class="p-tag" style="color:#D8CDBB" data-i18n="tagMagnetic"></p>
+    <h3 class="p-name">MAGNETIC HUG</h3>
+    <p class="p-quote" data-i18n="quoteMagnetic"></p>
+    <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" style="background:#D8CDBB" data-i18n="discount"></span></div>
+    <button class="cta" style="color:#D8CDBB" data-open="magnetic" data-i18n="ctaOrder"></button><span class="p-size" data-i18n="size"></span>
+  </div>
+
+</section>
+
+<section class="duo">
+  <div class="wrap">
+    <div>
+      <h4 data-i18n="usageTitle"></h4>
+      <p data-i18n="usageBody"></p>
+    </div>
+    <div>
+      <h4 data-i18n="careTitle"></h4>
+      <p data-i18n="careBody"></p>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <span class="wordmark">LUMENAL</span>
+  <p class="contact-line" data-i18n="contactLine"></p>
+  <p class="contact-line"><a href="https://wa.me/972543551527" target="_blank" rel="noopener" data-i18n="waLabel"></a> · <a href="tel:+972543551527">0543551527</a></p>
+  <p class="ship-note" data-i18n="shipNote"></p>
+  <p class="fine" data-i18n="fine"></p>
+</footer>
+
+<div class="overlay" id="productOverlay">
+  <div class="overlay-inner">
+    <div class="overlay-top">
+      <span class="wordmark">LUMENAL</span>
+      <button class="overlay-close" id="overlayClose" aria-label="Close">✕</button>
+    </div>
+    <div class="overlay-photos" id="overlayPhotos"></div>
+    <p class="p-tag" id="overlayTag"></p>
+    <h3 class="p-name" id="overlayName"></h3>
+    <p class="p-quote" id="overlayQuote"></p>
+    <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" id="overlayBadge" data-i18n="discount"></span></div>
+    <button class="cart-btn-order" id="overlayAdd" data-i18n="addToCart"></button>
+  </div>
+</div>
+
+<div class="overlay" id="cartOverlay">
+  <div class="overlay-inner">
+    <div class="overlay-top">
+      <span class="wordmark" data-i18n="cartTitle"></span>
+      <button class="overlay-close" id="cartClose" aria-label="Close">✕</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="cart-summary" id="cartSummary" style="display:none">
+      <div class="row"><span data-i18n="subtotal"></span><span id="sumSubtotal"></span></div>
+      <div class="row"><span data-i18n="delivery"></span><span id="sumDelivery"></span></div>
+      <div class="row total"><span data-i18n="total"></span><span id="sumTotal"></span></div>
+      <form class="cart-form" id="checkoutForm">
+        <input type="text" id="custFirst" data-i18n-ph="firstName" required>
+        <input type="text" id="custLast" data-i18n-ph="lastName" required>
+        <textarea id="custAddress" data-i18n-ph="address" required></textarea>
+        <button type="submit" class="cart-btn-order" data-i18n="confirmOrder"></button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  var PHOTOS = {
+    noir: ["images/noir1.jpg","images/noir2.jpg","images/noir3.jpg","images/noir4.jpg","images/noir5.jpg"],
+    crave: ["images/crave1.jpg","images/crave2.jpg","images/crave3.jpg","images/crave4.jpg","images/crave5.jpg","images/crave6.jpg"],
+    magnetic: ["images/magnetic1.jpg","images/magnetic2.jpg","images/magnetic3.jpg","images/magnetic4.jpg","images/magnetic5.jpg","images/magnetic6.jpg"]
+  };
+
+  var I18N = {
+    ar: {
+      heroTag: "أناقة فرنسية، روح عربية — صُنعت في الإمارات العربية المتحدة",
+      scrollHint: "مرّري لتكتشفي المجموعة",
+      storyBody: "لومينال وُلدت من فكرة بسيطة: الفخامة الحقيقية تُضيء من الداخل. كل عطر عندنا مصمَّم ليكشف وجهاً من هذا الضوء — رغبة توقظ، احتضان يشفي، وقوة تتحرك بصمت. بزجاجة تشبه تاجاً مرصّعاً وتوقيع ذهبي خالد، تجمع لومينال بين أناقة العطور الفرنسية الكلاسيكية وروح عربية دافئة.",
+      storyTag: "فلسفة لومينال",
+      phil1: "تركيبات عالية التركيز، أثر يدوم طويلاً",
+      phil2: "زجاجة توقيعية بغطاء يشبه التاج المرصّع",
+      phil3: "تصميم موحّد، وكود لوني مختلف لكل عطر",
+      phil4: "تفاصيل مدروسة من لحظة فتح العلبة إلى آخر أثر يتركه العطر",
+      phil5: "أناقة فرنسية، دفء عربي، توقيع ضوء واحد",
+      tagNoir: "للرجال · أسود وذهبي",
+      tagCrave: "للنساء · أحمر وذهبي",
+      tagMagnetic: "للجنسين · أبيض وذهبي",
+      quoteNoir: "سحر خالد، حيث يهمس الشغف بصمت وتحكم الرغبة بأناقة لا تُقاوم.",
+      quoteCrave: "عطر يوقظ رغبات ممنوعة، يلفّ روحك بشغف لا يُقاوم، ويترك أثراً لا يفلت منه قلب.",
+      quoteMagnetic: "مو كل احتضان يزول؛ في احتضان يبقى للأبد، يشدّ روحك لرابط دافئ لا ينتهي.",
+      discount: "خصم 50%",
+      ctaOrder: "تواصل للطلب",
+      size: "100 مل",
+      usageTitle: "طريقة الاستخدام",
+      usageBody: "يُرش على نقاط النبض — الرقبة، المعصمين، خلف الأذنين. لهالة أخف، رشّيه بالهواء وامشِ خلاله، واتركيه يتفاعل مع دفء بشرتك ليدوم أطول.",
+      careTitle: "العناية والتخزين",
+      careBody: "يُحفظ بعيداً عن الحرارة وأشعة الشمس المباشرة. يُخزَّن بشكل عمودي، مغلقاً، وبعناية.",
+      contactLine: "للتجربة أو الطلب:",
+      waLabel: "واتساب",
+      shipNote: "صُنعت في الإمارات العربية المتحدة — نشحن حالياً إلى القدس، الداخل، والضفة الغربية.",
+      fine: "© 2026 Lumenal. جميع الحقوق محفوظة.",
+      waOrder: "📩 اطلب عبر واتساب",
+      waMsg: "مرحباً، حابب/ة أطلب عطر {name} من لومينال.",
+      close: "رجوع",
+      soundOn: "تفعيل الصوت",
+      soundOff: "كتم الصوت",
+      addToCart: "أضف للسلة",
+      added: "✓ أُضيف للسلة",
+      cartTitle: "سلة الطلبات",
+      cartEmpty: "السلة فاضية — اختاري عطر وضيفيه.",
+      qty: "الكمية",
+      subtotal: "المجموع الفرعي",
+      delivery: "التوصيل",
+      total: "الإجمالي",
+      firstName: "الاسم الأول",
+      lastName: "اسم العائلة",
+      address: "عنوان التوصيل (المدينة/الحي والشارع)",
+      confirmOrder: "✅ تأكيد الطلب عبر واتساب",
+      fillFields: "الرجاء تعبئة الاسم والعنوان قبل تأكيد الطلب",
+      orderMsgHeader: "طلب جديد من لومينال:",
+      orderMsgName: "الاسم",
+      orderMsgAddress: "العنوان"
+    },
+    en: {
+      heroTag: "French elegance, Arabian soul — Crafted in the UAE",
+      scrollHint: "Swipe to explore the collection",
+      storyBody: "LUMENAL was born from a simple belief: true luxury glows from within. Every fragrance is designed to reveal a different facet of that light — a desire that awakens, an embrace that heals, a strength that moves in silence. With a bottle like a jeweled crown and a timeless golden signature, LUMENAL unites classic French perfumery with a warm Arabian soul.",
+      storyTag: "The Lumenal Philosophy",
+      phil1: "High-concentration compositions, long-lasting on skin",
+      phil2: "A signature bottle crowned with a jewel-like cap",
+      phil3: "One unified design, a distinct color code per fragrance",
+      phil4: "Thoughtful details, from unboxing to the final trail",
+      phil5: "French elegance, Arabian warmth, one luminous signature",
+      tagNoir: "For Men · Black & Gold",
+      tagCrave: "For Women · Red & Gold",
+      tagMagnetic: "Unisex · White & Gold",
+      quoteNoir: "A timeless allure, where passion whispers in silence and desire reigns with irresistible elegance.",
+      quoteCrave: "A fragrance that awakens forbidden desires, wraps your soul in irresistible passion, and leaves a trail no heart can escape.",
+      quoteMagnetic: "Not every embrace fades away; some hold you forever, pulling your soul into an eternal link of warmth and desire.",
+      discount: "50% Off",
+      ctaOrder: "Order Now",
+      size: "100ml",
+      usageTitle: "How to Wear",
+      usageBody: "Apply to pulse points — neck, wrists, behind the ears. For a lighter veil, mist the air and walk through it, letting it warm with your skin for a longer-lasting trail.",
+      careTitle: "Care & Storage",
+      careBody: "Keep away from heat and direct sunlight. Store upright, sealed, and with care.",
+      contactLine: "To try a sample or place an order:",
+      waLabel: "WhatsApp",
+      shipNote: "Crafted in the United Arab Emirates — currently shipping to Jerusalem, Israel, and the West Bank.",
+      fine: "© 2026 Lumenal. All rights reserved.",
+      waOrder: "📩 Order via WhatsApp",
+      waMsg: "Hi, I'd like to order the {name} fragrance from Lumenal.",
+      close: "Close",
+      soundOn: "Enable sound",
+      soundOff: "Mute sound",
+      addToCart: "Add to Cart",
+      added: "✓ Added to cart",
+      cartTitle: "Your Order",
+      cartEmpty: "Your cart is empty — pick a fragrance to add.",
+      qty: "Qty",
+      subtotal: "Subtotal",
+      delivery: "Delivery",
+      total: "Total",
+      firstName: "First name",
+      lastName: "Last name",
+      address: "Delivery address (city/area & street)",
+      confirmOrder: "✅ Confirm Order via WhatsApp",
+      fillFields: "Please fill in your name and address before confirming",
+      orderMsgHeader: "New order from Lumenal:",
+      orderMsgName: "Name",
+      orderMsgAddress: "Address"
+    },
+    he: {
+      heroTag: "אלגנטיות צרפתית, נשמה ערבית — נוצר באיחוד האמירויות",
+      scrollHint: "החליקי לגלות את הקולקציה",
+      storyBody: "לומינל נולדה מתוך אמונה פשוטה: פאר אמיתי זוהר מבפנים. כל בושם שלנו נוצר כדי לחשוף פן אחר של אותו אור — תשוקה שמעוררת, חיבוק שמרפא, וכוח שנע בשקט. עם בקבוק כמו כתר משובץ אבנים חן וחתימה זהובה על-זמנית, לומינל מאחדת בין אלגנטיות הבישום הצרפתי הקלאסי לנשמה ערבית חמה.",
+      storyTag: "הפילוסופיה של לומינל",
+      phil1: "תרכובות בריכוז גבוה, נותרות זמן רב על העור",
+      phil2: "בקבוק חתימה עם פקק בסגנון כתר משובץ",
+      phil3: "עיצוב אחיד, קוד צבע ייחודי לכל בושם",
+      phil4: "פרטים מוקפדים — מרגע פתיחת הקופסה ועד לניחוח האחרון",
+      phil5: "אלגנטיות צרפתית, חום ערבי, חתימת אור אחת",
+      tagNoir: "לגברים · שחור וזהב",
+      tagCrave: "לנשים · אדום וזהב",
+      tagMagnetic: "יוניסקס · לבן וזהב",
+      quoteNoir: "קסם בלתי נשכח, שבו התשוקה לוחשת בשקט והרצון שולט באלגנטיות שאי אפשר לעמוד בפניה.",
+      quoteCrave: "בושם שמעורר תשוקות אסורות, עוטף את נשמתך ברגש בלתי נשלט, ומשאיר עקבות שאף לב לא יכול לברוח מהם.",
+      quoteMagnetic: "לא כל חיבוק דועך; יש כזה שנשאר לנצח, ומושך את נשמתך אל קשר חם שלא נגמר.",
+      discount: "50% הנחה",
+      ctaOrder: "הזמיני עכשיו",
+      size: "100 מ״ל",
+      usageTitle: "איך למרוח",
+      usageBody: "מורחים על נקודות הדופק — הצוואר, פרקי הידיים, מאחורי האוזניים. להילה עדינה יותר, רססי באוויר ועברי דרכו, ותני לו להתחמם עם העור לניחוח שנשאר יותר זמן.",
+      careTitle: "טיפוח ואחסון",
+      careBody: "יש להרחיק מחום ומאור שמש ישיר. לאחסן בעמידה, סגור, ובזהירות.",
+      contactLine: "לניסיון או להזמנה:",
+      waLabel: "וואטסאפ",
+      shipNote: "נוצר באיחוד האמירויות הערביות — כרגע משלוחים לירושלים, ישראל והגדה המערבית.",
+      fine: "© 2026 לומינל. כל הזכויות שמורות.",
+      waOrder: "📩 הזמיני דרך וואטסאפ",
+      waMsg: "שלום, אשמח להזמין את הבושם {name} מלומינל.",
+      close: "סגירה",
+      soundOn: "הפעלת קול",
+      soundOff: "השתקה",
+      addToCart: "הוספה לסל",
+      added: "✓ נוסף לסל",
+      cartTitle: "ההזמנה שלך",
+      cartEmpty: "הסל ריק — בחרי בושם להוספה.",
+      qty: "כמות",
+      subtotal: "סכום ביניים",
+      delivery: "משלוח",
+      total: "סה״כ",
+      firstName: "שם פרטי",
+      lastName: "שם משפחה",
+      address: "כתובת למשלוח (עיר/שכונה ורחוב)",
+      confirmOrder: "✅ אישור הזמנה דרך וואטסאפ",
+      fillFields: "נא למלא שם וכתובת לפני אישור ההזמנה",
+      orderMsgHeader: "הזמנה חדשה מלומינל:",
+      orderMsgName: "שם",
+      orderMsgAddress: "כתובת"
+    }
+  };
+
+  var PRODUCT_NAMES = { noir: "NOIR DESIRE", crave: "CRAVE ME", magnetic: "MAGNETIC HUG" };
+  var currentLang = "ar";
+
+  function applyLang(lang){
+    currentLang = lang;
+    var dict = I18N[lang];
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
+    document.body.setAttribute("data-lang", lang);
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      var key = el.getAttribute("data-i18n");
+      if(dict[key] !== undefined){ el.textContent = dict[key]; }
+    });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function(el){
+      var key = el.getAttribute("data-i18n-ph");
+      if(dict[key] !== undefined){ el.setAttribute("placeholder", dict[key]); }
+    });
+    document.querySelectorAll("#langGroup button").forEach(function(btn){
+      btn.classList.toggle("active", btn.getAttribute("data-lang-btn") === lang);
+    });
+    if(overlayCurrentKey){ openProduct(overlayCurrentKey); }
+    if(typeof renderCart === "function"){ renderCart(); }
+  }
+
+  document.querySelectorAll("#langGroup button").forEach(function(btn){
+    btn.addEventListener("click", function(){ applyLang(btn.getAttribute("data-lang-btn")); });
+  });
+
+  document.querySelectorAll(".p-gallery").forEach(function(el){
+    var key = el.getAttribute("data-product");
+    PHOTOS[key].slice(0,3).forEach(function(b64){
+      var img = document.createElement("img");
+      img.src = b64;
+      img.alt = PRODUCT_NAMES[key];
+      img.addEventListener("click", function(){ openProduct(key); });
+      el.appendChild(img);
+    });
+  });
+
+  var overlay = document.getElementById("productOverlay");
+  var ovPhotos = document.getElementById("overlayPhotos");
+  var ovTag = document.getElementById("overlayTag");
+  var ovName = document.getElementById("overlayName");
+  var ovQuote = document.getElementById("overlayQuote");
+  var overlayCurrentKey = null;
+  var quoteKeyMap = { noir:"quoteNoir", crave:"quoteCrave", magnetic:"quoteMagnetic" };
+  var tagKeyMap = { noir:"tagNoir", crave:"tagCrave", magnetic:"tagMagnetic" };
+  var accentMap = { noir:"#C9A17E", crave:"#C96B5A", magnetic:"#D8CDBB" };
+
+  function openProduct(key){
+    overlayCurrentKey = key;
+    var dict = I18N[currentLang];
+    ovPhotos.innerHTML = "";
+    PHOTOS[key].forEach(function(b64){
+      var img = document.createElement("img");
+      img.src = b64;
+      img.alt = PRODUCT_NAMES[key];
+      ovPhotos.appendChild(img);
+    });
+    ovTag.textContent = dict[tagKeyMap[key]];
+    ovTag.style.color = accentMap[key];
+    ovName.textContent = PRODUCT_NAMES[key];
+    ovQuote.textContent = dict[quoteKeyMap[key]];
+    document.getElementById("overlayBadge").style.background = accentMap[key];
+    document.getElementById("overlayAdd").textContent = dict.addToCart;
+    overlay.classList.add("open");
+    document.body.classList.add("locked");
+    overlay.scrollTop = 0;
+  }
+
+  document.querySelectorAll("[data-open]").forEach(function(btn){
+    btn.addEventListener("click", function(){ openProduct(btn.getAttribute("data-open")); });
+  });
+  document.getElementById("overlayClose").addEventListener("click", function(){
+    overlay.classList.remove("open");
+    document.body.classList.remove("locked");
+  });
+
+  var v = document.getElementById("heroVideo");
+  var soundBtn = document.getElementById("heroPlayBtn");
+  soundBtn.addEventListener("click", function(){
+    v.muted = !v.muted;
+    if(!v.muted){ v.play(); }
+    soundBtn.querySelector(".ic").textContent = v.muted ? "🔊" : "🔇";
+    soundBtn.setAttribute("aria-label", I18N[currentLang][v.muted ? "soundOn" : "soundOff"]);
+  });
+  document.addEventListener("touchstart", function once(){ v.play().catch(function(){}); document.removeEventListener("touchstart", once); }, {once:true});
+
+  /* ---------- CART ---------- */
+  var PRICE = 449;
+  var DELIVERY = 30;
+  var CART = []; // {key, qty}
+  var cartOverlay = document.getElementById("cartOverlay");
+  var cartToggle = document.getElementById("cartToggle");
+  var cartBadge = document.getElementById("cartBadge");
+  var cartItemsEl = document.getElementById("cartItems");
+  var cartSummaryEl = document.getElementById("cartSummary");
+
+  function cartCount(){ return CART.reduce(function(s,i){ return s+i.qty; }, 0); }
+  function cartSubtotal(){ return CART.reduce(function(s,i){ return s+i.qty*PRICE; }, 0); }
+
+  function addToCart(key){
+    var existing = CART.find(function(i){ return i.key===key; });
+    if(existing){ existing.qty++; } else { CART.push({key:key, qty:1}); }
+    updateBadge();
+  }
+  function changeQty(key, delta){
+    var item = CART.find(function(i){ return i.key===key; });
+    if(!item) return;
+    item.qty += delta;
+    if(item.qty <= 0){ CART = CART.filter(function(i){ return i.key!==key; }); }
+    renderCart();
+  }
+  function removeItem(key){
+    CART = CART.filter(function(i){ return i.key!==key; });
+    renderCart();
+  }
+  function updateBadge(){
+    var c = cartCount();
+    cartBadge.textContent = c;
+    cartBadge.style.display = c > 0 ? "flex" : "none";
+  }
+
+  function renderCart(){
+    var dict = I18N[currentLang];
+    updateBadge();
+    cartItemsEl.innerHTML = "";
+    if(CART.length === 0){
+      cartItemsEl.innerHTML = '<p class="cart-empty">' + dict.cartEmpty + '</p>';
+      cartSummaryEl.style.display = "none";
+      return;
+    }
+    cartSummaryEl.style.display = "block";
+    CART.forEach(function(item){
+      var row = document.createElement("div");
+      row.className = "cart-item";
+      var img = document.createElement("img");
+      img.src = PHOTOS[item.key][0];
+      row.appendChild(img);
+      var info = document.createElement("div");
+      info.innerHTML = '<div class="ci-name">' + PRODUCT_NAMES[item.key] + '</div><div class="ci-price">₪' + PRICE + '</div>';
+      row.appendChild(info);
+      var qtyBox = document.createElement("div");
+      qtyBox.className = "ci-qty";
+      var minus = document.createElement("button"); minus.textContent = "−";
+      minus.addEventListener("click", function(){ changeQty(item.key, -1); });
+      var qtyLabel = document.createElement("span"); qtyLabel.textContent = item.qty;
+      var plus = document.createElement("button"); plus.textContent = "+";
+      plus.addEventListener("click", function(){ changeQty(item.key, 1); });
+      qtyBox.appendChild(minus); qtyBox.appendChild(qtyLabel); qtyBox.appendChild(plus);
+      row.appendChild(qtyBox);
+      var rm = document.createElement("button"); rm.className = "ci-remove"; rm.textContent = "✕";
+      rm.addEventListener("click", function(){ removeItem(item.key); });
+      row.appendChild(rm);
+      cartItemsEl.appendChild(row);
+    });
+    var sub = cartSubtotal();
+    document.getElementById("sumSubtotal").textContent = "₪" + sub;
+    document.getElementById("sumDelivery").textContent = "₪" + DELIVERY;
+    document.getElementById("sumTotal").textContent = "₪" + (sub + DELIVERY);
+  }
+
+  document.getElementById("overlayAdd").addEventListener("click", function(){
+    if(!overlayCurrentKey) return;
+    addToCart(overlayCurrentKey);
+    var btn = document.getElementById("overlayAdd");
+    var original = btn.textContent;
+    btn.textContent = I18N[currentLang].added;
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  });
+
+  cartToggle.addEventListener("click", function(){
+    renderCart();
+    cartOverlay.classList.add("open");
+    document.body.classList.add("locked");
+  });
+  document.getElementById("cartClose").addEventListener("click", function(){
+    cartOverlay.classList.remove("open");
+    document.body.classList.remove("locked");
+  });
+
+  document.getElementById("checkoutForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var dict = I18N[currentLang];
+    var first = document.getElementById("custFirst").value.trim();
+    var last = document.getElementById("custLast").value.trim();
+    var addr = document.getElementById("custAddress").value.trim();
+    if(!first || !last || !addr || CART.length === 0){
+      alert(dict.fillFields);
+      return;
+    }
+    var lines = [dict.orderMsgHeader, ""];
+    CART.forEach(function(item){
+      lines.push("- " + PRODUCT_NAMES[item.key] + " ×" + item.qty + " — ₪" + (item.qty*PRICE));
+    });
+    lines.push("");
+    lines.push(dict.subtotal + ": ₪" + cartSubtotal());
+    lines.push(dict.delivery + ": ₪" + DELIVERY);
+    lines.push(dict.total + ": ₪" + (cartSubtotal()+DELIVERY));
+    lines.push("");
+    lines.push(dict.orderMsgName + ": " + first + " " + last);
+    lines.push(dict.orderMsgAddress + ": " + addr);
+    var msg = encodeURIComponent(lines.join(String.fromCharCode(10)));
+    var waUrl = "https://wa.me/972543551527?text=" + msg;
+    var link = document.createElement("a");
+    link.href = waUrl;
+    link.target = "_blank";
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+
+  applyLang("ar");
+</script>
+
+</body>
+</html>
