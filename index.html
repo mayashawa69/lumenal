@@ -37,8 +37,9 @@
   /* LANG TOGGLE */
   .lang-group{
     position:fixed;top:calc(1rem + env(safe-area-inset-top,0px));inset-inline-start:1rem;z-index:60;
-    display:flex;gap:2px;background:rgba(15,14,13,0.55);border:1px solid var(--brass);
-    border-radius:999px;padding:3px;
+    display:flex;gap:2px;background:rgba(15,14,13,0.45);border:1px solid var(--brass);
+    border-radius:999px;padding:3px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 24px -8px rgba(0,0,0,0.5);
   }
   .lang-group button{
     border:none;background:none;color:var(--bone-dim);font-family:'Cinzel',serif;
@@ -51,7 +52,9 @@
   .reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
   .reel-overlay{
     position:absolute;inset:0;
-    background:linear-gradient(180deg, rgba(15,14,13,0.55) 0%, rgba(15,14,13,0.35) 40%, rgba(15,14,13,0.85) 100%);
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(15,14,13,0.05) 0%, rgba(15,14,13,0.5) 78%),
+      linear-gradient(180deg, rgba(15,14,13,0.55) 0%, rgba(15,14,13,0.3) 40%, rgba(15,14,13,0.88) 100%);
     display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.5rem;
   }
   .reel-overlay .wordmark{font-size:clamp(2.6rem, 11vw, 5.2rem);font-weight:500;color:var(--bone);margin:0;}
@@ -65,6 +68,29 @@
     background:rgba(15,14,13,0.45);color:var(--bone);font-size:1.05rem;
     display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;
   }
+
+  /* SCROLL REVEAL */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.9s cubic-bezier(.16,.8,.3,1), transform 0.9s cubic-bezier(.16,.8,.3,1);}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+
+  /* EYEBROW LABEL */
+  .eyebrow{
+    display:block;font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.28em;
+    color:var(--brass);text-transform:uppercase;margin-bottom:1rem;
+  }
+
+  /* MARQUEE */
+  .marquee{
+    background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    overflow:hidden;padding:1rem 0;white-space:nowrap;
+  }
+  .marquee-track{display:inline-flex;animation:marqueeScroll 26s linear infinite;direction:ltr;}
+  .marquee-track span{
+    font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.18em;color:var(--bone-dim);
+    padding:0 1.6rem;display:inline-flex;align-items:center;gap:1.6rem;
+  }
+  .marquee-track span::after{content:"✦";color:var(--brass);}
+  @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
   /* STORY */
   .story{background:var(--ink-2);text-align:center;}
@@ -85,13 +111,22 @@
   .p-gallery::-webkit-scrollbar-thumb{background:var(--line);}
   .p-gallery img{flex:0 0 82%;scroll-snap-align:start;aspect-ratio:3/4;object-fit:cover;border-radius:2px;box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);cursor:pointer;}
   .p-tag{font-size:0.76rem;letter-spacing:0.04em;margin:0 0 0.4rem;}
-  .p-name{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:500;margin:0 0 1rem;direction:ltr;text-align:start;letter-spacing:0.04em;}
+  .p-name{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:500;margin:0 0 0.5rem;direction:ltr;text-align:start;letter-spacing:0.04em;}
+  .p-rule{width:26px;height:1px;background:var(--accent,var(--brass));margin:0 0 1.2rem;}
   .p-quote{font-size:1.05rem;line-height:1.8;color:var(--bone);margin:0 0 1.3rem;}
   .p-price{display:flex;align-items:baseline;gap:0.7rem;margin:0 0 1.1rem;}
   .p-price .old{font-size:0.95rem;color:#D9534F;text-decoration:line-through;}
   .p-price .new{font-family:'Cinzel',serif;font-size:1.3rem;color:#4CAF6D;letter-spacing:0.02em;}
   .p-price .badge{font-size:0.72rem;color:var(--ink);padding:0.15rem 0.55rem;border-radius:2px;letter-spacing:0.02em;}
-  .cta{display:inline-block;font-size:0.88rem;background:none;border:none;padding:0 0 2px;text-decoration:none;font-family:'Tajawal',sans-serif;cursor:pointer;border-bottom:1px solid currentColor;}
+  .cta{
+    display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;letter-spacing:0.02em;
+    background:none;border:1px solid currentColor;border-radius:999px;
+    padding:0.6rem 1.3rem;text-decoration:none;font-family:'Tajawal',sans-serif;cursor:pointer;
+    transition:transform 0.15s ease;
+  }
+  .cta:active{transform:scale(0.96);}
+  .cta::after{content:"←";font-size:0.85rem;}
+  [dir="ltr"] .cta::after{content:"→";}
   .p-size{font-size:0.8rem;color:var(--bone-dim);margin-inline-start:1rem;}
 
   /* USAGE / CARE */
@@ -138,9 +173,12 @@
   .cart-toggle{
     position:fixed;top:calc(1rem + env(safe-area-inset-top,0px));inset-inline-end:1rem;z-index:60;
     width:42px;height:42px;border-radius:50%;border:1px solid var(--brass);
-    background:rgba(15,14,13,0.55);color:var(--bone);font-size:1.1rem;cursor:pointer;
+    background:rgba(15,14,13,0.45);color:var(--bone);font-size:1.1rem;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 24px -8px rgba(0,0,0,0.5);transition:transform 0.2s ease;
   }
+  .cart-toggle:active{transform:scale(0.92);}
   .cart-badge{
     position:absolute;top:-4px;inset-inline-end:-4px;
     background:#4CAF6D;color:var(--ink);font-size:0.65rem;font-weight:700;
@@ -191,13 +229,18 @@
   <span class="scroll-hint" data-i18n="scrollHint"></span>
 </section>
 
-<section class="story wrap">
+<div class="marquee"><div class="marquee-track">
+  <span>NOIR DESIRE</span><span>CRAVE ME</span><span>MAGNETIC HUG</span><span>LUMENAL</span>
+  <span>NOIR DESIRE</span><span>CRAVE ME</span><span>MAGNETIC HUG</span><span>LUMENAL</span>
+</div></div>
+
+<section class="story wrap reveal">
   <p class="quote-en">"True luxury glows from within."</p>
   <p class="quote-body" data-i18n="storyBody"></p>
   <span class="tag" data-i18n="storyTag"></span>
 </section>
 
-<section class="philosophy wrap">
+<section class="philosophy wrap reveal">
   <ul>
     <li data-i18n="phil1"></li>
     <li data-i18n="phil2"></li>
@@ -208,29 +251,33 @@
 </section>
 
 <section class="products wrap">
+  <span class="eyebrow reveal" style="text-align:center" data-i18n="collectionLabel"></span>
 
-  <div class="product">
+  <div class="product reveal">
     <div class="p-gallery" data-product="noir"></div>
     <p class="p-tag" style="color:#C9A17E" data-i18n="tagNoir"></p>
     <h3 class="p-name">NOIR DESIRE</h3>
+    <div class="p-rule" style="background:#C9A17E"></div>
     <p class="p-quote" data-i18n="quoteNoir"></p>
     <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" style="background:#C9A17E" data-i18n="discount"></span></div>
     <button class="cta" style="color:#C9A17E" data-open="noir" data-i18n="ctaOrder"></button><span class="p-size" data-i18n="size"></span>
   </div>
 
-  <div class="product">
+  <div class="product reveal">
     <div class="p-gallery" data-product="crave"></div>
     <p class="p-tag" style="color:#C96B5A" data-i18n="tagCrave"></p>
     <h3 class="p-name">CRAVE ME</h3>
+    <div class="p-rule" style="background:#C96B5A"></div>
     <p class="p-quote" data-i18n="quoteCrave"></p>
     <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" style="background:#C96B5A" data-i18n="discount"></span></div>
     <button class="cta" style="color:#C96B5A" data-open="crave" data-i18n="ctaOrder"></button><span class="p-size" data-i18n="size"></span>
   </div>
 
-  <div class="product">
+  <div class="product reveal">
     <div class="p-gallery" data-product="magnetic"></div>
     <p class="p-tag" style="color:#D8CDBB" data-i18n="tagMagnetic"></p>
     <h3 class="p-name">MAGNETIC HUG</h3>
+    <div class="p-rule" style="background:#D8CDBB"></div>
     <p class="p-quote" data-i18n="quoteMagnetic"></p>
     <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" style="background:#D8CDBB" data-i18n="discount"></span></div>
     <button class="cta" style="color:#D8CDBB" data-open="magnetic" data-i18n="ctaOrder"></button><span class="p-size" data-i18n="size"></span>
@@ -238,7 +285,7 @@
 
 </section>
 
-<section class="duo">
+<section class="duo reveal">
   <div class="wrap">
     <div>
       <h4 data-i18n="usageTitle"></h4>
@@ -308,6 +355,7 @@
       scrollHint: "مرّري لتكتشفي المجموعة",
       storyBody: "لومينال وُلدت من فكرة بسيطة: الفخامة الحقيقية تُضيء من الداخل. كل عطر عندنا مصمَّم ليكشف وجهاً من هذا الضوء — رغبة توقظ، احتضان يشفي، وقوة تتحرك بصمت. بزجاجة تشبه تاجاً مرصّعاً وتوقيع ذهبي خالد، تجمع لومينال بين أناقة العطور الفرنسية الكلاسيكية وروح عربية دافئة.",
       storyTag: "فلسفة لومينال",
+      collectionLabel: "المجموعة",
       phil1: "تركيبات عالية التركيز، أثر يدوم طويلاً",
       phil2: "زجاجة توقيعية بغطاء يشبه التاج المرصّع",
       phil3: "تصميم موحّد، وكود لوني مختلف لكل عطر",
@@ -357,6 +405,7 @@
       scrollHint: "Swipe to explore the collection",
       storyBody: "LUMENAL was born from a simple belief: true luxury glows from within. Every fragrance is designed to reveal a different facet of that light — a desire that awakens, an embrace that heals, a strength that moves in silence. With a bottle like a jeweled crown and a timeless golden signature, LUMENAL unites classic French perfumery with a warm Arabian soul.",
       storyTag: "The Lumenal Philosophy",
+      collectionLabel: "The Collection",
       phil1: "High-concentration compositions, long-lasting on skin",
       phil2: "A signature bottle crowned with a jewel-like cap",
       phil3: "One unified design, a distinct color code per fragrance",
@@ -406,6 +455,7 @@
       scrollHint: "החליקי לגלות את הקולקציה",
       storyBody: "לומינל נולדה מתוך אמונה פשוטה: פאר אמיתי זוהר מבפנים. כל בושם שלנו נוצר כדי לחשוף פן אחר של אותו אור — תשוקה שמעוררת, חיבוק שמרפא, וכוח שנע בשקט. עם בקבוק כמו כתר משובץ אבנים חן וחתימה זהובה על-זמנית, לומינל מאחדת בין אלגנטיות הבישום הצרפתי הקלאסי לנשמה ערבית חמה.",
       storyTag: "הפילוסופיה של לומינל",
+      collectionLabel: "הקולקציה",
       phil1: "תרכובות בריכוז גבוה, נותרות זמן רב על העור",
       phil2: "בקבוק חתימה עם פקק בסגנון כתר משובץ",
       phil3: "עיצוב אחיד, קוד צבע ייחודי לכל בושם",
@@ -664,6 +714,18 @@
     link.click();
     document.body.removeChild(link);
   });
+
+  /* SCROLL REVEAL */
+  if("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ entry.target.classList.add("in-view"); io.unobserve(entry.target); }
+      });
+    }, {threshold:0.15, rootMargin:"0px 0px -8% 0px"});
+    document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function(el){ el.classList.add("in-view"); });
+  }
 
   applyLang("ar");
 </script>
