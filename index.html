@@ -169,6 +169,8 @@
     text-decoration:none;cursor:pointer;
   }
 
+  .go-cart{background:none;border:1px solid var(--brass);color:var(--brass);margin-top:0.7rem;}
+
   /* CART ICON */
   .cart-toggle{
     position:fixed;top:calc(1rem + env(safe-area-inset-top,0px));inset-inline-end:1rem;z-index:60;
@@ -204,6 +206,34 @@
   }
   .cart-form textarea{resize:vertical;min-height:64px;}
   .cart-empty{color:var(--bone-dim);font-size:0.92rem;padding:2rem 0;text-align:center;}
+
+  /* DESKTOP / LARGE SCREENS */
+  @media (min-width:900px){
+    section{padding:7rem 2rem;}
+    .products.wrap{max-width:1180px;display:grid;grid-template-columns:repeat(3,1fr);gap:3rem;}
+    .products .eyebrow{grid-column:1/-1;margin-bottom:0;}
+    .product{max-width:none;margin:0;padding:0;border-top:none;}
+    .products .product:last-child{border-bottom:none;}
+    .p-gallery img{flex:0 0 100%;}
+    .story.wrap{max-width:820px;}
+    .story .quote-en{font-size:2rem;max-width:40ch;}
+    .story .quote-body{font-size:1.05rem;max-width:56ch;}
+    .philosophy ul{max-width:640px;}
+    .duo .wrap{max-width:820px;}
+    #productOverlay .overlay-inner{max-width:1000px;display:grid;grid-template-columns:1fr 1fr;column-gap:3rem;align-content:start;}
+    #productOverlay .overlay-top{grid-column:1/-1;}
+    #productOverlay .overlay-photos{grid-column:1;grid-row:2 / span 8;min-width:0;}
+    #productOverlay .overlay-photos img{flex:0 0 100%;}
+    #productOverlay .overlay-inner > :not(.overlay-top):not(.overlay-photos){grid-column:2;}
+    #productOverlay .overlay-inner .p-name{margin-top:0;}
+    #cartOverlay .overlay-inner{max-width:640px;}
+  }
+  @media (hover:hover){
+    .p-gallery img{transition:transform 0.5s ease;}
+    .p-gallery img:hover{transform:scale(1.02);}
+    .cta:hover, .cart-btn-order:hover, .go-cart:hover{opacity:0.8;}
+    .lang-group button:hover, .cart-toggle:hover, .sound-toggle:hover{opacity:0.85;}
+  }
 </style>
 </head>
 <body data-lang="ar">
@@ -318,6 +348,7 @@
     <p class="p-quote" id="overlayQuote"></p>
     <div class="p-price"><span class="old">₪899</span><span class="new">₪449</span><span class="badge" id="overlayBadge" data-i18n="discount"></span></div>
     <button class="cart-btn-order" id="overlayAdd" data-i18n="addToCart"></button>
+    <button class="cart-btn-order go-cart" id="overlayGoCart" data-i18n="goToCart" style="display:none"></button>
   </div>
 </div>
 
@@ -384,6 +415,7 @@
       soundOn: "تفعيل الصوت",
       soundOff: "كتم الصوت",
       addToCart: "أضف للسلة",
+      goToCart: "الذهاب إلى السلة",
       added: "✓ أُضيف للسلة",
       cartTitle: "سلة الطلبات",
       cartEmpty: "السلة فاضية — اختاري عطر وضيفيه.",
@@ -434,6 +466,7 @@
       soundOn: "Enable sound",
       soundOff: "Mute sound",
       addToCart: "Add to Cart",
+      goToCart: "Go to Cart",
       added: "✓ Added to cart",
       cartTitle: "Your Order",
       cartEmpty: "Your cart is empty — pick a fragrance to add.",
@@ -484,6 +517,7 @@
       soundOn: "הפעלת קול",
       soundOff: "השתקה",
       addToCart: "הוספה לסל",
+      goToCart: "מעבר לסל",
       added: "✓ נוסף לסל",
       cartTitle: "ההזמנה שלך",
       cartEmpty: "הסל ריק — בחרי בושם להוספה.",
@@ -567,6 +601,7 @@
     ovQuote.textContent = dict[quoteKeyMap[key]];
     document.getElementById("overlayBadge").style.background = accentMap[key];
     document.getElementById("overlayAdd").textContent = dict.addToCart;
+    document.getElementById("overlayGoCart").style.display = (typeof CART !== "undefined" && CART.length > 0) ? "flex" : "none";
     overlay.classList.add("open");
     document.body.classList.add("locked");
     overlay.scrollTop = 0;
@@ -576,6 +611,7 @@
     btn.addEventListener("click", function(){ openProduct(btn.getAttribute("data-open")); });
   });
   document.getElementById("overlayClose").addEventListener("click", function(){
+    overlayCurrentKey = null;
     overlay.classList.remove("open");
     document.body.classList.remove("locked");
   });
@@ -668,9 +704,18 @@
     if(!overlayCurrentKey) return;
     addToCart(overlayCurrentKey);
     var btn = document.getElementById("overlayAdd");
-    var original = btn.textContent;
+    var original = I18N[currentLang].addToCart;
     btn.textContent = I18N[currentLang].added;
-    setTimeout(function(){ btn.textContent = original; }, 1200);
+    setTimeout(function(){ btn.textContent = I18N[currentLang].addToCart; }, 1200);
+    document.getElementById("overlayGoCart").style.display = "flex";
+  });
+
+  document.getElementById("overlayGoCart").addEventListener("click", function(){
+    overlay.classList.remove("open");
+    overlayCurrentKey = null;
+    renderCart();
+    cartOverlay.classList.add("open");
+    document.body.classList.add("locked");
   });
 
   cartToggle.addEventListener("click", function(){
